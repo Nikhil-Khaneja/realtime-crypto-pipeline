@@ -1,0 +1,15 @@
+# Planning docs
+PersonA_Plan.docx
+
+# Secrets
+*.pem
+*.env
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Mac
+.DS_Store
