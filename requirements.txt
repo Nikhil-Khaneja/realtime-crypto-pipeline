@@ -1,0 +1,7 @@
+alpaca-trade-api>=3.0.0
+kafka-python>=2.0.2
+pyspark>=3.5.0
+findspark>=2.0.1
+websocket-client>=1.6.0
+pandas>=2.0.0
+elasticsearch>=8.0.0
