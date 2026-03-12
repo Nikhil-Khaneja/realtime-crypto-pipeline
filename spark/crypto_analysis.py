@@ -14,12 +14,20 @@ spark = SparkSession.builder \
 
 spark.sparkContext.setLogLevel("WARN")
 
-# Schema for incoming Kafka JSON messages
+# Updated schema matching CoinGecko producer output
 schema = StructType([
-    StructField("symbol",    StringType(), True),
-    StructField("price",     DoubleType(), True),
-    StructField("volume",    DoubleType(), True),
-    StructField("timestamp", StringType(), True),
+    StructField("coin_id",          StringType(), True),
+    StructField("symbol",           StringType(), True),
+    StructField("name",             StringType(), True),
+    StructField("price",            DoubleType(), True),
+    StructField("market_cap",       DoubleType(), True),
+    StructField("volume_24h",       DoubleType(), True),
+    StructField("high_24h",         DoubleType(), True),
+    StructField("low_24h",          DoubleType(), True),
+    StructField("price_change_1h",  DoubleType(), True),
+    StructField("price_change_24h", DoubleType(), True),
+    StructField("circulating_supply", DoubleType(), True),
+    StructField("timestamp",        StringType(), True),
 ])
 
 # Read from Kafka topic: crypto-stream
@@ -32,9 +40,8 @@ df_raw = spark.readStream \
 
 # Parse JSON values
 df = df_raw.select(
-    from_json(col("value").cast("string"), schema).alias("data"),
-    col("timestamp").alias("kafka_ts")
-).select("data.*", "kafka_ts")
+    from_json(col("value").cast("string"), schema).alias("data")
+).select("data.*")
 
 # Convert timestamp
 df = df.withColumn("event_time", to_timestamp("timestamp"))
@@ -50,12 +57,18 @@ df = df.withColumn("moving_avg", avg("price").over(window_spec))
 df = df.withColumn("pct_change",
     ((col("price") - col("moving_avg")) / col("moving_avg") * 100))
 
-# Final schema matching Hive table
+# Final schema for Hive table
 df_out = df.select(
     col("symbol"),
+    col("name"),
     col("price"),
     col("moving_avg"),
-    col("volume"),
+    col("volume_24h").alias("volume"),
+    col("market_cap"),
+    col("high_24h"),
+    col("low_24h"),
+    col("price_change_1h"),
+    col("price_change_24h"),
     col("pct_change"),
     col("event_time").alias("timestamp")
 )
