@@ -9,7 +9,7 @@ COINGECKO_BASE_URL = "https://api.coingecko.com/api/v3"
 
 # Kafka
 KAFKA_BROKER         = os.getenv("KAFKA_BROKER", "localhost:9092")
-KAFKA_RAW_TOPIC      = "crypto-raw"
+KAFKA_RAW_TOPIC      = "crypto-stream"
 KAFKA_ANALYZED_TOPIC = "crypto-analyzed"
 
 # Hive / HDFS
