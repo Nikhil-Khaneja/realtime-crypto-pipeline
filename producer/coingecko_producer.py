@@ -69,7 +69,7 @@ def fetch_market_data() -> list:
 # Preprocessing
 # ---------------------------------------------------------------------------
 
-def preprocess(coin: dict) -> dict | None:
+def preprocess(coin: dict):
     """Clean and normalize a raw CoinGecko coin record."""
     price = coin.get("current_price")
     volume = coin.get("total_volume")
